@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zones - Ambulance Dispatch System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link active">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Flash messages -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Zone Management</h1>
+                <p class="page-subtitle">Configure geographical zones and emergency response sectors</p>
+            </div>
+            <div>
+                <a th:href="@{/zones/new}" class="btn">+ Add Zone</a>
+            </div>
+        </div>
+
+        <!-- Proximity Scheme Note for College Viva -->
+        <div class="content-card" style="background-color: var(--color-bg-light); padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+            <strong>Nearest Zone Allocation Logic (Viva Reference):</strong>
+            <p style="font-size: 0.85rem; color: var(--color-grey-dark); margin-top: 0.25rem;">
+                When an emergency call arrives, the system first checks the caller's zone. If no ambulance is available, it searches adjacent zones:
+                <br>
+                &bull; <strong>Zone A</strong> &rarr; Zone B, Zone C &nbsp;|&nbsp;
+                &bull; <strong>Zone B</strong> &rarr; Zone A, Zone C, Zone D &nbsp;|&nbsp;
+                &bull; <strong>Zone C</strong> &rarr; Zone A, Zone B, Zone D &nbsp;|&nbsp;
+                &bull; <strong>Zone D</strong> &rarr; Zone B, Zone C, Zone E &nbsp;|&nbsp;
+                &bull; <strong>Zone E</strong> &rarr; Zone C, Zone D
+            </p>
+        </div>
+
+        <div class="content-card">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Zone Name</th>
+                            <th>Zone Code</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(zones)}">
+                            <td colspan="5" style="text-align: center; color: var(--color-grey-dark);">No zones found. Click "+ Add Zone" to create one.</td>
+                        </tr>
+                        <tr th:each="z : ${zones}">
+                            <td th:text="${z.id}">1</td>
+                            <td><strong th:text="${z.zoneName}">Zone A</strong></td>
+                            <td th:text="${z.zoneCode}">ZONE_A</td>
+                            <td th:text="${z.description}">North District / Downtown</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a th:href="@{/zones/edit/{id}(id=${z.id})}" class="btn btn-sm btn-secondary">Edit</a>
+                                    <a th:href="@{/zones/delete/{id}(id=${z.id})}" class="btn btn-sm" onclick="return confirm('Are you sure you want to delete this zone?');">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

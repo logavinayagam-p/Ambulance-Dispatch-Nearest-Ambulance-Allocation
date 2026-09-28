@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispatch Record - Ambulance Dispatch System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link active">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Dispatch Assignment Record</h1>
+                <p class="page-subtitle" th:text="${'Record #DSP-' + dispatch.id}">Dispatch Detail</p>
+            </div>
+            <div>
+                <a th:href="@{/dispatches}" class="btn btn-secondary">&larr; Back to History</a>
+            </div>
+        </div>
+
+        <div class="content-card" style="max-width: 750px; margin: 0 auto;">
+            <ul class="detail-list">
+                <li class="detail-item">
+                    <span class="detail-label">Dispatch ID:</span>
+                    <span class="detail-value"><strong th:text="${'#DSP-' + dispatch.id}">#DSP-1</strong></span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Dispatch Timestamp:</span>
+                    <span class="detail-value" th:text="${#temporals.format(dispatch.dispatchTime, 'dd-MMM-yyyy HH:mm:ss')}">28-Sep-2026 10:00:00</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Response Time:</span>
+                    <span class="detail-value" th:text="${dispatch.responseTime != null ? dispatch.responseTime : 'Immediate'}">Immediate</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Assignment Status:</span>
+                    <span class="detail-value">
+                        <span class="badge badge-dispatched" th:if="${dispatch.status == 'DISPATCHED'}">DISPATCHED</span>
+                        <span class="badge badge-completed" th:if="${dispatch.status == 'COMPLETED'}">COMPLETED</span>
+                    </span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Assigned Ambulance:</span>
+                    <span class="detail-value">
+                        <strong th:text="${dispatch.ambulance.ambulanceNumber}">AMB001</strong>
+                        (<span th:text="${dispatch.ambulance.ambulanceType}">ALS</span>) -
+                        Driver: <span th:text="${dispatch.ambulance.driverName}">Arun</span> (Phone: <span th:text="${dispatch.ambulance.driverPhone}">9876543210</span>)
+                    </span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Ambulance Home Zone:</span>
+                    <span class="detail-value" th:text="${dispatch.ambulance.homeZone.zoneName + ' (' + dispatch.ambulance.homeZone.zoneCode + ')'}">Zone A</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Emergency Call:</span>
+                    <span class="detail-value">
+                        <span th:text="${'Call #' + dispatch.emergencyCall.id + ' - ' + dispatch.emergencyCall.callerName}">Call #1 - Ramesh</span>
+                        (Phone: <span th:text="${dispatch.emergencyCall.callerPhone}">9123456780</span>)
+                    </span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Emergency Type & Location:</span>
+                    <span class="detail-value" th:text="${dispatch.emergencyCall.emergencyType + ' at ' + dispatch.emergencyCall.emergencyLocation}">Cardiac at Block 4</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Emergency Zone:</span>
+                    <span class="detail-value" th:text="${dispatch.emergencyCall.zone.zoneName + ' (' + dispatch.emergencyCall.zone.zoneCode + ')'}">Zone A</span>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Ambulance Dispatch System'">Zone Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link active">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" th:text="${pageTitle}">Zone Form</h1>
+                <p class="page-subtitle">Define zone boundary details and naming code</p>
+            </div>
+            <div>
+                <a th:href="@{/zones}" class="btn btn-secondary">&larr; Back to List</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form th:action="@{/zones/save}" th:object="${zone}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label class="form-label" for="zoneName">Zone Name *</label>
+                    <input type="text" class="form-control" id="zoneName" th:field="*{zoneName}" placeholder="e.g. Zone A">
+                    <span class="form-error" th:if="${#fields.hasErrors('zoneName')}" th:errors="*{zoneName}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="zoneCode">Zone Code *</label>
+                    <input type="text" class="form-control" id="zoneCode" th:field="*{zoneCode}" placeholder="e.g. ZONE_A">
+                    <span class="form-error" th:if="${#fields.hasErrors('zoneCode')}" th:errors="*{zoneCode}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="description">Description / Area Covered</label>
+                    <textarea class="form-control" id="description" th:field="*{description}" rows="3" placeholder="e.g. Downtown Central District"></textarea>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <button type="submit" class="btn">Save Zone</button>
+                    <a th:href="@{/zones}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

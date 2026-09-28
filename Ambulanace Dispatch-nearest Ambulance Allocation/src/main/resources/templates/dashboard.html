@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Ambulance Dispatch System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link active">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Operations Dashboard</h1>
+                <p class="page-subtitle">Real-time status of ambulances, zones, and emergency calls</p>
+            </div>
+            <div>
+                <a th:href="@{/emergency-calls/new}" class="btn">+ Log Emergency Call</a>
+            </div>
+        </div>
+
+        <!-- Ambulance Metrics -->
+        <h2 style="font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.5px;">Ambulance Fleet Status</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${totalAmbulances}">0</div>
+                <div class="stat-label">Total Ambulances</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${availableAmbulances}">0</div>
+                <div class="stat-label">Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${busyAmbulances}">0</div>
+                <div class="stat-label">Busy / Dispatched</div>
+            </div>
+        </div>
+
+        <!-- Emergency Calls Metrics -->
+        <h2 style="font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.75rem; letter-spacing: 0.5px;">Emergency Calls Overview</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${totalCalls}">0</div>
+                <div class="stat-label">Total Calls</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${pendingCalls}">0</div>
+                <div class="stat-label">Pending Calls</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${dispatchedCalls}">0</div>
+                <div class="stat-label">Dispatched Calls</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${completedCalls}">0</div>
+                <div class="stat-label">Completed Calls</div>
+            </div>
+        </div>
+
+        <!-- Recent Emergency Calls Table -->
+        <div class="content-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="card-title" style="margin-bottom: 0; border-bottom: none;">Recent Emergency Calls</h3>
+                <a th:href="@{/emergency-calls}" class="btn btn-sm btn-secondary">View All Calls</a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Caller Name</th>
+                            <th>Emergency Type</th>
+                            <th>Zone</th>
+                            <th>Status</th>
+                            <th>Assigned Ambulance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(recentCalls)}">
+                            <td colspan="7" style="text-align: center; color: var(--color-grey-dark);">No emergency calls logged yet.</td>
+                        </tr>
+                        <tr th:each="c : ${recentCalls}">
+                            <td th:text="${'#' + c.id}">#1</td>
+                            <td th:text="${c.callerName}">Ramesh</td>
+                            <td th:text="${c.emergencyType}">Cardiac</td>
+                            <td th:text="${c.zone != null ? c.zone.zoneName : 'N/A'}">Zone A</td>
+                            <td>
+                                <span class="badge badge-pending" th:if="${c.status == 'PENDING'}">PENDING</span>
+                                <span class="badge badge-dispatched" th:if="${c.status == 'DISPATCHED'}">DISPATCHED</span>
+                                <span class="badge badge-completed" th:if="${c.status == 'COMPLETED'}">COMPLETED</span>
+                            </td>
+                            <td th:text="${c.assignedAmbulance != null ? c.assignedAmbulance.ambulanceNumber : 'None'}">AMB001</td>
+                            <td>
+                                <div class="btn-group">
+                                    <form th:if="${c.status == 'PENDING'}" th:action="@{/emergency-calls/dispatch/{id}(id=${c.id})}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm">Find Nearest Ambulance</button>
+                                    </form>
+                                    <form th:if="${c.status == 'DISPATCHED'}" th:action="@{/emergency-calls/complete/{id}(id=${c.id})}" method="post" style="display:inline;">
+                                        <button type="submit" class="btn btn-sm btn-secondary">Complete Call</button>
+                                    </form>
+                                    <a th:href="@{/emergency-calls/view/{id}(id=${c.id})}" class="btn btn-sm btn-secondary">View</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Dispatches Table -->
+        <div class="content-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 class="card-title" style="margin-bottom: 0; border-bottom: none;">Recent Ambulance Dispatches</h3>
+                <a th:href="@{/dispatches}" class="btn btn-sm btn-secondary">View All Dispatches</a>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Dispatch ID</th>
+                            <th>Emergency Call</th>
+                            <th>Ambulance</th>
+                            <th>Dispatch Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(recentDispatches)}">
+                            <td colspan="6" style="text-align: center; color: var(--color-grey-dark);">No dispatch history recorded yet.</td>
+                        </tr>
+                        <tr th:each="d : ${recentDispatches}">
+                            <td th:text="${'#DSP-' + d.id}">#DSP-1</td>
+                            <td th:text="${'Call #' + d.emergencyCall.id + ' (' + d.emergencyCall.callerName + ')'}">Call #1</td>
+                            <td th:text="${d.ambulance.ambulanceNumber + ' - ' + d.ambulance.driverName}">AMB001</td>
+                            <td th:text="${#temporals.format(d.dispatchTime, 'dd-MMM-yyyy HH:mm')}">28-Sep-2026 10:00</td>
+                            <td>
+                                <span class="badge badge-dispatched" th:if="${d.status == 'DISPATCHED'}">DISPATCHED</span>
+                                <span class="badge badge-completed" th:if="${d.status == 'COMPLETED'}">COMPLETED</span>
+                            </td>
+                            <td>
+                                <a th:href="@{/dispatches/view/{id}(id=${d.id})}" class="btn btn-sm btn-secondary">Details</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

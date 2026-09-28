@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ambulances - Ambulance Dispatch System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link active">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Flash messages -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Ambulance Management</h1>
+                <p class="page-subtitle">Manage fleet units, driver details, home zones, and availability</p>
+            </div>
+            <div>
+                <a th:href="@{/ambulances/new}" class="btn">+ Add Ambulance</a>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Ambulance No.</th>
+                            <th>Driver Name</th>
+                            <th>Driver Phone</th>
+                            <th>Ambulance Type</th>
+                            <th>Home Zone</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(ambulances)}">
+                            <td colspan="8" style="text-align: center; color: var(--color-grey-dark);">No ambulances registered. Click "+ Add Ambulance" to create one.</td>
+                        </tr>
+                        <tr th:each="amb : ${ambulances}">
+                            <td th:text="${amb.id}">1</td>
+                            <td><strong th:text="${amb.ambulanceNumber}">AMB001</strong></td>
+                            <td th:text="${amb.driverName}">Arun</td>
+                            <td th:text="${amb.driverPhone}">9876543210</td>
+                            <td th:text="${amb.ambulanceType}">Advanced Life Support</td>
+                            <td th:text="${amb.homeZone.zoneName}">Zone A</td>
+                            <td>
+                                <span class="badge badge-available" th:if="${amb.status == 'AVAILABLE'}">AVAILABLE</span>
+                                <span class="badge badge-busy" th:if="${amb.status == 'BUSY'}">BUSY</span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a th:href="@{/ambulances/view/{id}(id=${amb.id})}" class="btn btn-sm btn-secondary">View</a>
+                                    <a th:href="@{/ambulances/edit/{id}(id=${amb.id})}" class="btn btn-sm btn-secondary">Edit</a>
+                                    <a th:href="@{/ambulances/toggle-status/{id}(id=${amb.id})}" class="btn btn-sm btn-secondary" title="Switch Status">Toggle Status</a>
+                                    <a th:href="@{/ambulances/delete/{id}(id=${amb.id})}" class="btn btn-sm" onclick="return confirm('Are you sure you want to delete this ambulance?');">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

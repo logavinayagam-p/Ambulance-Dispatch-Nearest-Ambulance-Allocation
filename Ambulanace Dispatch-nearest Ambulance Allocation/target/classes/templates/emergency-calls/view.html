@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Call Details - Ambulance Dispatch System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link active">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Emergency Call Details</h1>
+                <p class="page-subtitle" th:text="${'Call Record #' + call.id + ' - ' + call.callerName}">Call Details</p>
+            </div>
+            <div>
+                <a th:href="@{/emergency-calls}" class="btn btn-secondary">&larr; Back to Calls</a>
+                <a th:href="@{/emergency-calls/edit/{id}(id=${call.id})}" class="btn btn-secondary">Edit Call</a>
+            </div>
+        </div>
+
+        <div class="content-card" style="max-width: 750px; margin: 0 auto;">
+            <ul class="detail-list">
+                <li class="detail-item">
+                    <span class="detail-label">Call Reference:</span>
+                    <span class="detail-value" th:text="${'#' + call.id}">#1</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Caller Name:</span>
+                    <span class="detail-value"><strong th:text="${call.callerName}">Ramesh</strong></span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Contact Phone:</span>
+                    <span class="detail-value" th:text="${call.callerPhone}">9123456780</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Emergency Type:</span>
+                    <span class="detail-value" th:text="${call.emergencyType}">Cardiac</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Location Address:</span>
+                    <span class="detail-value" th:text="${call.emergencyLocation}">Block 4, North Park Avenue</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Incident Zone:</span>
+                    <span class="detail-value" th:text="${call.zone.zoneName + ' (' + call.zone.zoneCode + ')'}">Zone A (ZONE_A)</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Timestamp:</span>
+                    <span class="detail-value" th:text="${#temporals.format(call.callTime, 'dd-MMM-yyyy HH:mm:ss')}">28-Sep-2026 10:00:00</span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Current Status:</span>
+                    <span class="detail-value">
+                        <span class="badge badge-pending" th:if="${call.status == 'PENDING'}">PENDING</span>
+                        <span class="badge badge-dispatched" th:if="${call.status == 'DISPATCHED'}">DISPATCHED</span>
+                        <span class="badge badge-completed" th:if="${call.status == 'COMPLETED'}">COMPLETED</span>
+                    </span>
+                </li>
+                <li class="detail-item">
+                    <span class="detail-label">Assigned Ambulance:</span>
+                    <span class="detail-value">
+                        <span th:if="${call.assignedAmbulance != null}">
+                            <strong th:text="${call.assignedAmbulance.ambulanceNumber}">AMB001</strong>
+                            (Driver: <span th:text="${call.assignedAmbulance.driverName}">Arun</span>,
+                            Phone: <span th:text="${call.assignedAmbulance.driverPhone}">9876543210</span>)
+                        </span>
+                        <span th:if="${call.assignedAmbulance == null}" style="color: var(--color-grey-dark);">Not assigned yet</span>
+                    </span>
+                </li>
+            </ul>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                <form th:if="${call.status == 'PENDING'}" th:action="@{/emergency-calls/dispatch/{id}(id=${call.id})}" method="post">
+                    <button type="submit" class="btn">Find Nearest Ambulance</button>
+                </form>
+
+                <form th:if="${call.status == 'DISPATCHED'}" th:action="@{/emergency-calls/complete/{id}(id=${call.id})}" method="post">
+                    <button type="submit" class="btn">Complete Call</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

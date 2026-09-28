@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Ambulance Dispatch System'">Emergency Call Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link active">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" th:text="${pageTitle}">Log Emergency Call</h1>
+                <p class="page-subtitle">Record incoming emergency details for immediate response</p>
+            </div>
+            <div>
+                <a th:href="@{/emergency-calls}" class="btn btn-secondary">&larr; Back to List</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form th:action="@{/emergency-calls/save}" th:object="${emergencyCall}" method="post">
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{callTime}" th:if="${emergencyCall.id != null}">
+                <input type="hidden" th:field="*{assignedAmbulance}" th:if="${emergencyCall.id != null}">
+
+                <div class="form-group">
+                    <label class="form-label" for="callerName">Caller Full Name *</label>
+                    <input type="text" class="form-control" id="callerName" th:field="*{callerName}" placeholder="e.g. Ramesh">
+                    <span class="form-error" th:if="${#fields.hasErrors('callerName')}" th:errors="*{callerName}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="callerPhone">Caller Phone Number *</label>
+                    <input type="text" class="form-control" id="callerPhone" th:field="*{callerPhone}" placeholder="e.g. 9123456780">
+                    <span class="form-error" th:if="${#fields.hasErrors('callerPhone')}" th:errors="*{callerPhone}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="emergencyType">Emergency Category *</label>
+                    <select class="form-control" id="emergencyType" th:field="*{emergencyType}">
+                        <option value="">-- Select Category --</option>
+                        <option value="Cardiac">Cardiac / Heart Attack</option>
+                        <option value="Accident">Road Traffic Accident</option>
+                        <option value="Trauma">Physical Trauma / Fall</option>
+                        <option value="Respiratory">Severe Respiratory Distress</option>
+                        <option value="Pregnancy">Maternity / Pregnancy</option>
+                        <option value="General">General Medical Emergency</option>
+                    </select>
+                    <span class="form-error" th:if="${#fields.hasErrors('emergencyType')}" th:errors="*{emergencyType}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="emergencyLocation">Emergency Location / Street Address *</label>
+                    <input type="text" class="form-control" id="emergencyLocation" th:field="*{emergencyLocation}" placeholder="e.g. Block 4, North Park Avenue">
+                    <span class="form-error" th:if="${#fields.hasErrors('emergencyLocation')}" th:errors="*{emergencyLocation}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="zone">Incident Zone *</label>
+                    <select class="form-control" id="zone" th:field="*{zone}">
+                        <option value="">-- Select Zone --</option>
+                        <option th:each="z : ${zones}" th:value="${z.id}" th:text="${z.zoneName + ' (' + z.zoneCode + ')'}"></option>
+                    </select>
+                    <span class="form-error" th:if="${#fields.hasErrors('zone')}" th:errors="*{zone}"></span>
+                </div>
+
+                <div class="form-group" th:if="${emergencyCall.id != null}">
+                    <label class="form-label" for="status">Call Status</label>
+                    <select class="form-control" id="status" th:field="*{status}">
+                        <option value="PENDING">PENDING</option>
+                        <option value="DISPATCHED">DISPATCHED</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <button type="submit" class="btn">Save Emergency Call</button>
+                    <a th:href="@{/emergency-calls}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>

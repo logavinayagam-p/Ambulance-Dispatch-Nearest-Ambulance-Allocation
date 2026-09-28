@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle} + ' - Ambulance Dispatch System'">Ambulance Form</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/dashboard}" class="brand-title">Ambulance Dispatch System</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/dashboard}" class="nav-link">Dashboard</a></li>
+                <li><a th:href="@{/ambulances}" class="nav-link active">Ambulances</a></li>
+                <li><a th:href="@{/zones}" class="nav-link">Zones</a></li>
+                <li><a th:href="@{/emergency-calls}" class="nav-link">Emergency Calls</a></li>
+                <li><a th:href="@{/dispatches}" class="nav-link">Dispatch History</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" th:text="${pageTitle}">Ambulance Form</h1>
+                <p class="page-subtitle">Fill in the ambulance specifications and driver details</p>
+            </div>
+            <div>
+                <a th:href="@{/ambulances}" class="btn btn-secondary">&larr; Back to List</a>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form th:action="@{/ambulances/save}" th:object="${ambulance}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label class="form-label" for="ambulanceNumber">Ambulance Number *</label>
+                    <input type="text" class="form-control" id="ambulanceNumber" th:field="*{ambulanceNumber}" placeholder="e.g. AMB001">
+                    <span class="form-error" th:if="${#fields.hasErrors('ambulanceNumber')}" th:errors="*{ambulanceNumber}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="driverName">Driver Name *</label>
+                    <input type="text" class="form-control" id="driverName" th:field="*{driverName}" placeholder="e.g. Arun">
+                    <span class="form-error" th:if="${#fields.hasErrors('driverName')}" th:errors="*{driverName}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="driverPhone">Driver Phone Number *</label>
+                    <input type="text" class="form-control" id="driverPhone" th:field="*{driverPhone}" placeholder="e.g. 9876543210">
+                    <span class="form-error" th:if="${#fields.hasErrors('driverPhone')}" th:errors="*{driverPhone}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="ambulanceType">Ambulance Type *</label>
+                    <select class="form-control" id="ambulanceType" th:field="*{ambulanceType}">
+                        <option value="">-- Select Type --</option>
+                        <option value="Basic Life Support">Basic Life Support (BLS)</option>
+                        <option value="Advanced Life Support">Advanced Life Support (ALS)</option>
+                        <option value="Patient Transport">Patient Transport Service (PTS)</option>
+                    </select>
+                    <span class="form-error" th:if="${#fields.hasErrors('ambulanceType')}" th:errors="*{ambulanceType}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="homeZone">Home Zone *</label>
+                    <select class="form-control" id="homeZone" th:field="*{homeZone}">
+                        <option value="">-- Select Zone --</option>
+                        <option th:each="z : ${zones}" th:value="${z.id}" th:text="${z.zoneName + ' (' + z.zoneCode + ')'}"></option>
+                    </select>
+                    <span class="form-error" th:if="${#fields.hasErrors('homeZone')}" th:errors="*{homeZone}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="status">Current Status *</label>
+                    <select class="form-control" id="status" th:field="*{status}">
+                        <option value="AVAILABLE">AVAILABLE</option>
+                        <option value="BUSY">BUSY</option>
+                    </select>
+                </div>
+
+                <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                    <button type="submit" class="btn">Save Ambulance</button>
+                    <a th:href="@{/ambulances}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Ambulance Dispatch & Nearest Ambulance Allocation System &copy; 2026. Academic College Project.</p>
+    </footer>
+
+</body>
+</html>
